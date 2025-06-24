@@ -128,3 +128,82 @@ class TestAddString:
         
         with pytest.raises(InvalidInputError):
             add_string("1,2\nabc\n4,5")
+
+    def test_custom_delimiter_semicolon(self):
+        """Test custom delimiter with semicolon."""
+        assert add_string("//;\n1;2") == 3
+        assert add_string("//;\n1;2;3;4;5") == 15
+        assert add_string("//;\n10;20;30") == 60
+
+    def test_custom_delimiter_pipe(self):
+        """Test custom delimiter with pipe character."""
+        assert add_string("//|\n1|2|3") == 6
+        assert add_string("//|\n10|20|30|40") == 100
+
+    def test_custom_delimiter_asterisk(self):
+        """Test custom delimiter with asterisk."""
+        assert add_string("//*\n1*2*3*4") == 10
+        assert add_string("//*\n5*10*15") == 30
+
+    def test_custom_delimiter_with_spaces(self):
+        """Test custom delimiter with spaces around numbers."""
+        assert add_string("//;\n1 ; 2 ; 3") == 6
+        assert add_string("//|\n 1 | 2 | 3 ") == 6
+
+    def test_custom_delimiter_negative_numbers(self):
+        """Test custom delimiter with negative numbers."""
+        assert add_string("//;\n-1;-2;-3") == -6
+        assert add_string("//|\n1|-1|0") == 0
+
+    def test_custom_delimiter_large_numbers(self):
+        """Test custom delimiter with large numbers."""
+        assert add_string("//;\n1000;2000;3000") == 6000
+        assert add_string("//|\n999999|1") == 1000000
+
+    def test_custom_delimiter_single_number(self):
+        """Test custom delimiter with single number."""
+        assert add_string("//;\n42") == 42
+        assert add_string("//|\n0") == 0
+
+    def test_custom_delimiter_empty_numbers(self):
+        """Test custom delimiter with empty numbers part."""
+        assert add_string("//;\n") == 0
+
+    def test_invalid_custom_delimiter_format(self):
+        """Test invalid custom delimiter format."""
+        with pytest.raises(InvalidInputError):
+            add_string("//;1;2")  # Missing newline
+        
+        with pytest.raises(InvalidInputError):
+            add_string("//\n1,2")  # Empty delimiter
+
+    def test_custom_delimiter_invalid_numbers(self):
+        """Test custom delimiter with invalid numbers."""
+        with pytest.raises(InvalidInputError):
+            add_string("//;\n1;a;3")
+        
+        with pytest.raises(InvalidInputError):
+            add_string("//|\n1|2|abc|4")
+
+    def test_mixed_delimiters(self):
+        """Test that custom delimiter doesn't interfere with comma delimiter."""
+        # Custom delimiter should be used
+        assert add_string("//;\n1;2;3") == 6
+        
+        # Comma delimiter should still work for non-custom format
+        assert add_string("1,2,3") == 6
+
+    def test_custom_delimiter_with_whitespace_in_delimiter(self):
+        """Test custom delimiter with whitespace in delimiter definition."""
+        with pytest.raises(InvalidInputError):
+            add_string("// ; \n1;2;3")  # Whitespace in delimiter
+
+    def test_custom_delimiter_multiple_characters(self):
+        """Test custom delimiter with multiple characters."""
+        assert add_string("//**\n1**2**3") == 6
+        assert add_string("//--\n10--20--30") == 60
+
+    def test_custom_delimiter_with_newlines(self):
+        """Test custom delimiter with newlines in numbers."""
+        assert add_string("//;\n1;2\n3;4") == 10
+        assert add_string("//|\n1|2\n3|4\n5") == 15
