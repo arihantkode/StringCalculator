@@ -1,4 +1,4 @@
-from src.invalid_input_error import InvalidInputError
+from src.modeled_errors import InvalidInputError, NegativeNumberError
 
 
 def add_string(numbers_str):
@@ -16,6 +16,7 @@ def add_string(numbers_str):
         
     Raises:
         InvalidInputError: If the input contains non-numeric values or empty strings between delimiters
+        NegativeNumberError: If the input contains negative numbers
     """
     
     if not numbers_str:
@@ -46,15 +47,26 @@ def add_string(numbers_str):
     try:
         # Process the numbers part
         numbers = []
+        negative_numbers = []
+        
         for line in numbers_part.split('\n'):
             for num in line.split(delimiter):
                 stripped_num = num.strip()
                 if stripped_num:  # Only add non-empty strings
                     int_num = int(stripped_num)
-                    numbers.append(int_num)
+                    if int_num < 0:
+                        negative_numbers.append(str(int_num))
+                    else:
+                        numbers.append(int_num)
                 # else:
                 #     # Empty string between delimiters is invalid
                 #     raise InvalidInputError("Invalid input:" + numbers_str)
+        
+        # Check for negative numbers and raise exception if found
+        if negative_numbers:
+            error_message = "negative numbers not allowed " + ", ".join(negative_numbers)
+            raise NegativeNumberError(error_message)
+            
     except ValueError:
         raise InvalidInputError("Invalid input:" + numbers_str)
     

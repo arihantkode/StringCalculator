@@ -1,6 +1,6 @@
 import pytest
 from src.add_string import add_string
-from src.invalid_input_error import InvalidInputError
+from src.modeled_errors import InvalidInputError, NegativeNumberError
 
 
 class TestAddString:
@@ -15,7 +15,6 @@ class TestAddString:
         assert add_string("1") == 1
         assert add_string("42") == 42
         assert add_string("0") == 0
-        assert add_string("-5") == -5
     
     def test_two_numbers(self):
         """Test that two comma-separated numbers return their sum."""
@@ -29,12 +28,6 @@ class TestAddString:
         assert add_string("10,20,30") == 60
         assert add_string("1,1,1,1,1,1") == 6
         assert add_string("0,0,0,0") == 0
-
-    def test_negative_numbers(self):
-        """Test that negative numbers are handled correctly."""
-        assert add_string("-1,-2,-3") == -6
-        assert add_string("-1,-2,-3,-4,-5") == -15
-        assert add_string("-10,-20,-30") == -60
     
     def test_large_numbers(self):
         """Test that large numbers are handled correctly."""
@@ -59,6 +52,54 @@ class TestAddString:
         assert add_string("\t1,\n2,\r3") == 6
         assert add_string("   1   ,   2   ,   3   ") == 6
 
+    def test_negative_numbers_single(self):
+        """Test that single negative number raises exception."""
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -1"):
+            add_string("-1")
+        
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -5"):
+            add_string("-5")
+
+    def test_negative_numbers_multiple(self):
+        """Test that multiple negative numbers raise exception with all numbers listed."""
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -1, -2, -3"):
+            add_string("-1,-2,-3")
+        
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -10, -20, -30"):
+            add_string("-10,-20,-30")
+
+    def test_negative_numbers_mixed(self):
+        """Test that mixed positive and negative numbers raise exception with only negative numbers listed."""
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -1, -3"):
+            add_string("1,-1,2,-3,4")
+        
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -5"):
+            add_string("1,2,3,-5,4,5")
+
+    def test_negative_numbers_with_newlines(self):
+        """Test that negative numbers with newlines raise exception."""
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -1, -2"):
+            add_string("1\n-1\n-2\n3")
+        
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -1, -3"):
+            add_string("1,-1\n2,-3\n4")
+
+    def test_negative_numbers_with_custom_delimiter(self):
+        """Test that negative numbers with custom delimiters raise exception."""
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -1, -2"):
+            add_string("//;\n1;-1;-2;3")
+        
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -5"):
+            add_string("//|\n1|2|3|-5|4|5")
+
+    def test_negative_numbers_complex(self):
+        """Test complex scenarios with negative numbers."""
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -1, -2, -3, -4, -5"):
+            add_string("-1,-2,-3,-4,-5")
+        
+        with pytest.raises(NegativeNumberError, match="negative numbers not allowed -999999"):
+            add_string("999999,-999999,1")
+
     def test_invalid_inputs(self):
         """Test that invalid inputs raise appropriate exceptions."""
         with pytest.raises(InvalidInputError):
@@ -72,6 +113,8 @@ class TestAddString:
             add_string("1, a, 3")
         with pytest.raises(InvalidInputError):
             add_string("one, one, one")
+        # with pytest.raises(InvalidInputError):
+        #     add_string("1,2,  ,  3,4, ,5")
                
     def test_invalid_inputs_with_newlines(self):
         """Test that invalid inputs with newlines raise appropriate exceptions."""
@@ -99,11 +142,6 @@ class TestAddString:
         """Test newlines with spaces around numbers."""
         assert add_string(" 1 \n 2 \n 3 ") == 6
         assert add_string("1 , 2\n3 , 4") == 10
-
-    def test_newlines_negative_numbers(self):
-        """Test newlines with negative numbers."""
-        assert add_string("-1\n-2\n-3") == -6
-        assert add_string("1\n-1\n0") == 0
 
     def test_newlines_large_numbers(self):
         """Test newlines with large numbers."""
@@ -149,11 +187,6 @@ class TestAddString:
         """Test custom delimiter with spaces around numbers."""
         assert add_string("//;\n1 ; 2 ; 3") == 6
         assert add_string("//|\n 1 | 2 | 3 ") == 6
-
-    def test_custom_delimiter_negative_numbers(self):
-        """Test custom delimiter with negative numbers."""
-        assert add_string("//;\n-1;-2;-3") == -6
-        assert add_string("//|\n1|-1|0") == 0
 
     def test_custom_delimiter_large_numbers(self):
         """Test custom delimiter with large numbers."""
