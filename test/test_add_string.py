@@ -1,5 +1,6 @@
 import pytest
 from src.add_string import add_string
+from src.invalid_input_error import InvalidInputError
 
 
 class TestAddString:
@@ -51,3 +52,21 @@ class TestAddString:
         assert add_string(" 1 , 2 , 3 ") == 6
         assert add_string("\t1,\n2,\r3") == 6
         assert add_string("   1   ,   2   ,   3   ") == 6
+
+    def test_invalid_inputs(self):
+        """Test that invalid inputs raise appropriate exceptions."""
+        with pytest.raises(InvalidInputError):
+            add_string("1,a,3")
+        with pytest.raises(InvalidInputError):
+            add_string("one, one, one")
+        with pytest.raises(InvalidInputError):
+            add_string("1,2,,3,4,,5")
+
+    def test_invalid_inputs_with_spaces(self):
+        """Test that invalid inputs with spaces raise appropriate exceptions."""
+        with pytest.raises(InvalidInputError):
+            add_string("1, a, 3")
+        with pytest.raises(InvalidInputError):
+            add_string("one, one, one")
+        with pytest.raises(InvalidInputError):
+            add_string("1,2,  ,  3,4, ,5")    
