@@ -85,3 +85,50 @@ class TestAddString:
     def test_valid_inputs_with_newlines(self):
         """Test that valid inputs with newlines are handled correctly."""
         assert add_string("1,\n2,\n3") == 6
+
+    def test_newlines_as_delimiters(self):
+        """Test that newlines can be used as delimiters."""
+        assert add_string("1\n2\n3") == 6
+        assert add_string("1\n2,3") == 6
+        assert add_string("1,2\n3") == 6
+        assert add_string("1\n2\n3,4,5") == 15
+
+    def test_mixed_delimiters_complex(self):
+        """Test complex combinations of newlines and commas."""
+        assert add_string("1\n2,3\n4,5,6") == 21
+        assert add_string("1,2\n3,4\n5") == 15
+        assert add_string("1\n2\n3\n4\n5") == 15
+
+    def test_newlines_with_spaces(self):
+        """Test newlines with spaces around numbers."""
+        assert add_string(" 1 \n 2 \n 3 ") == 6
+        assert add_string("1 , 2\n3 , 4") == 10
+
+    def test_newlines_negative_numbers(self):
+        """Test newlines with negative numbers."""
+        assert add_string("-1\n-2\n-3") == -6
+        assert add_string("1\n-1\n0") == 0
+
+    def test_newlines_large_numbers(self):
+        """Test newlines with large numbers."""
+        assert add_string("1000\n2000\n3000") == 6000
+        assert add_string("999999\n1") == 1000000
+
+    def test_newlines_single_number(self):
+        """Test newlines with single number."""
+        assert add_string("42\n") == 42
+        assert add_string("\n42") == 42
+        assert add_string("42\n\n") == 42
+
+    def test_newlines_empty_lines(self):
+        """Test newlines with empty lines."""
+        assert add_string("1\n\n2\n\n3") == 6
+        assert add_string("\n1\n2\n3\n") == 6
+
+    def test_newlines_invalid_numbers(self):
+        """Test newlines with invalid numbers."""
+        with pytest.raises(InvalidInputError):
+            add_string("1\na\n3")
+        
+        with pytest.raises(InvalidInputError):
+            add_string("1,2\nabc\n4,5")
