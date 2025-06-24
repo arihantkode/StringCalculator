@@ -12,7 +12,7 @@ def add_string(numbers_str):
         int: The sum of the numbers
         
     Raises:
-        InvalidInputError: If the input contains non-numeric values
+        InvalidInputError: If the input contains non-numeric values or consecutive commas
     """
     
     if not numbers_str:
@@ -24,9 +24,12 @@ def add_string(numbers_str):
         for line in numbers_str.split('\n'):
             for num in line.split(','):
                 stripped_num = num.strip()
-                if stripped_num:  # Only add non-empty strings
+                if stripped_num and stripped_num.isnumeric():  # Only add non-empty strings
                     numbers.append(int(stripped_num))
+                else:
+                    raise InvalidInputError("Invalid input:" + numbers_str)
+                
     except ValueError:
-        raise InvalidInputError("Invalid input: " + numbers_str)
+        raise InvalidInputError("Invalid input:" + numbers_str)
     
     return sum(numbers)

@@ -84,7 +84,7 @@ class TestAddString:
     
     def test_valid_inputs_with_newlines(self):
         """Test that valid inputs with newlines are handled correctly."""
-        assert add_string("1,\n2,\n3") == 6
+        assert add_string("1\n2,3") == 6
 
     def test_newlines_as_delimiters(self):
         """Test that newlines can be used as delimiters."""
