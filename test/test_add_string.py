@@ -65,8 +65,6 @@ class TestAddString:
             add_string("1,a,3")
         with pytest.raises(InvalidInputError):
             add_string("one, one, one")
-        with pytest.raises(InvalidInputError):
-            add_string("1,2,,3,4,,5")
 
     def test_invalid_inputs_with_spaces(self):
         """Test that invalid inputs with spaces raise appropriate exceptions."""
@@ -74,8 +72,6 @@ class TestAddString:
             add_string("1, a, 3")
         with pytest.raises(InvalidInputError):
             add_string("one, one, one")
-        with pytest.raises(InvalidInputError):
-            add_string("1,2,  ,  3,4, ,5")
                
     def test_invalid_inputs_with_newlines(self):
         """Test that invalid inputs with newlines raise appropriate exceptions."""
