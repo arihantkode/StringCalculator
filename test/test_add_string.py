@@ -29,6 +29,12 @@ class TestAddString:
         assert add_string("10,20,30") == 60
         assert add_string("1,1,1,1,1,1") == 6
         assert add_string("0,0,0,0") == 0
+
+    def test_negative_numbers(self):
+        """Test that negative numbers are handled correctly."""
+        assert add_string("-1,-2,-3") == -6
+        assert add_string("-1,-2,-3,-4,-5") == -15
+        assert add_string("-10,-20,-30") == -60
     
     def test_large_numbers(self):
         """Test that large numbers are handled correctly."""
