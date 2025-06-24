@@ -69,4 +69,13 @@ class TestAddString:
         with pytest.raises(InvalidInputError):
             add_string("one, one, one")
         with pytest.raises(InvalidInputError):
-            add_string("1,2,  ,  3,4, ,5")    
+            add_string("1,2,  ,  3,4, ,5")
+               
+    def test_invalid_inputs_with_newlines(self):
+        """Test that invalid inputs with newlines raise appropriate exceptions."""
+        with pytest.raises(InvalidInputError):
+            add_string("1,\na, 3")
+    
+    def test_valid_inputs_with_newlines(self):
+        """Test that valid inputs with newlines are handled correctly."""
+        assert add_string("1,\n2,\n3") == 6
