@@ -9,6 +9,7 @@ class TestAddString:
     def test_empty_string(self):
         """Test that empty string returns 0."""
         assert add_string("") == 0
+        assert add_string(" ") == 0
     
     def test_single_number(self):
         """Test that single number returns the number itself."""

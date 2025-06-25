@@ -19,7 +19,7 @@ def add_string(numbers_str):
         NegativeNumberError: If the input contains negative numbers
     """
     
-    if not numbers_str:
+    if not numbers_str.strip():
         return 0
     
     # Check if custom delimiter is specified
